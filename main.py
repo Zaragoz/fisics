@@ -1,52 +1,59 @@
-def culc(x, y, z, find):
+def culc(l):
 
-    var = [x, y, z]
-    formuls = [[x, "+", (("-", (("*", (8, 2, y, z)), z)), z)]]#x = (8*2*y*z) - z + z
+    for i in range(len(l)):
+        if l[i] == "!":
+            find = i
+            break
 
-    if var[find] == formuls[0][0]:
-        while True:
-            if formuls[0][0] != -1:
-                break
-            formuls[0][0] = rasp(formuls[0][1],formuls[0][2])
-        return formuls[0][0]
+    S,V,t,V0,a = l
 
-    else:
-        left = formuls[0][0]
-        c = 1
-        for i in range(len(formuls[0])):
-            if formuls[0][i] == int() or formuls[0][i] == float():
-                if formuls[0][i] == var[find]:
-                    c += 1
-            for j in range(len(formuls[0][i])):
-                if formuls[0][i][j] == var[find]:
-                    c+=1
+    formuls = [[S, "*", (V, t)],
+               [V, "+", (V0,("*", (a, t)))],
+               [S, "+", ( ("*", (V0, t)) , ("/", ("*", (a, ("**",t) ) ) ,(2) ) )]]
+    var_formuls = [[S, V, t],
+                   [V, V0, a, t],
+                   [S, V0, t, a]]
+    unknowns = [[0,0],
+                [0,0],
+                [0,0]]
 
-        if c == 1:
+    for i in range(len(var_formuls)):
+        unknowns[i][0] = var_formuls[i].count("?")
+        unknowns[i][1] = var_formuls[i].count("!")
 
-
-
-
-def rasp(z, l):
-    znach = 0
-    if z == "+":
-        for i in range(len(l)):
-            znach += l[i]
-    elif z == "-":
-        znatch = l[0] - l[1]
-    elif z == "*":
-        znach = 1
-        for i in range(len(l)):
-            znach *= l[i]
-    elif z == "/":
-        znach = l[0]
-        for i in range(1, len(l)):
-            znach /= l[i]
-    return znach
+    for i in range(len(formuls)):
+        if unknowns[i][0] == 0 and unknowns[i][1] == 1:
+            return rasp(formuls[i])
 
 
 
-x = -1
-y = 8
-z = 9
 
-print(culc(x,y,z))
+def rasp(l):
+    if type(l[1]) == "str":
+        z = l[1]
+        if tuple() not in l[2]:
+            if z == "*":
+                return l[2][0]*l[2][1]
+            if z == "+":
+                return l[2][0]+l[2][1]
+        else:
+            return rasp(l[2][1])
+
+    elif type(l[1]) == tuple:
+        z = l[1][0]
+        if tuple() not in l[1][1]:
+            if z == "*":
+                return l[1][1][0] * l[1][1][1]
+
+
+
+
+
+S = "?"
+V = "!"
+t = 5
+V0 = 10
+a = 2
+
+
+print(culc((S, V, t, V0, a)))
